@@ -11,7 +11,7 @@ class Manager(QObject):
     
     @pyqtSlot()
     def _write_new_brightness(self):
-        with open('/sys/class/backlight/10-0045/brightness', 'w') as f:
+        with open('/sys/class/backlight/10-0045/brightness', 'w+') as f:
             f.write(f"{self.brightness}")
         self.NewSettings.emit()
 

@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from PyQt5.QtWidgets import QApplication
 from model.model import Model
 from controllers.main_ctrl import MainController
@@ -16,6 +16,18 @@ class App(QApplication):
         self.main_ctrl.set_horns_mode()
 
 if __name__ == '__main__':
+
+    # At this point we may be running as root or as another user
+    # - Check the parameters are valid - show an error if not
+    # - Show the help message if requested
+    # Don't do any work or anything time-consuming here as it will run twice
+
+    if os.geteuid() != 0:
+        # os.execvp() replaces the running process, rather than launching a child
+        # process, so there's no need to exit afterwards. The extra "sudo" in the
+        # second parameter is required because Python doesn't automatically set $0
+        # in the new process.
+        os.execvp("sudo", ["sudo"] + sys.argv)
     app = App(sys.argv)
     qdarktheme.setup_theme()
     sys.exit(app.exec_())
