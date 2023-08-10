@@ -4,7 +4,7 @@ import pyaudio
 import wave
 
 class Player(QObject):
-    base_path = os.path.join(os.getcwd(), "carbage_run_audi/MVC_project/sound_files")
+    base_path =  "/home/carbage/carbage_run_audi/MVC_project/sound_files"
     soundFiles = ["sound_file_0_corrected.wav", "sound_file_1_corrected.wav", "sound_file_2_corrected.wav",
                   "sound_file_3_corrected.wav", "sound_file_4_corrected.wav", "sound_file_5_corrected.wav"]
     presetLookUpTable = [0, 1, 2, 3, 4, 5]  # index --> index resolved names
