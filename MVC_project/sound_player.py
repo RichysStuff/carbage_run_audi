@@ -4,9 +4,9 @@ import pyaudio
 import wave
 
 class Player(QObject):
-    base_path = os.path.join(os.getcwd(), "sound_files")
-    soundFiles = ["sound_file_0.wav", "sound_file_1.wav", "sound_file_2.wav",
-                  "sound_file_3.wav", "sound_file_4.wav", "sound_file_5.wav"]
+    base_path = os.path.join(os.getcwd(), "carbage_run_audi/MVC_project/sound_files")
+    soundFiles = ["sound_file_0_corrected.wav", "sound_file_1_corrected.wav", "sound_file_2_corrected.wav",
+                  "sound_file_3_corrected.wav", "sound_file_4_corrected.wav", "sound_file_5_corrected.wav"]
     presetLookUpTable = [0, 1, 2, 3, 4, 5]  # index --> index resolved names
     SoundSelected = pyqtSignal(str)
     SoundStarted = pyqtSignal()
@@ -21,6 +21,8 @@ class Player(QObject):
 
         self.resolvedSoundFiles = [os.path.join(self.base_path, sound_file) for sound_file in self.soundFiles]
         self.currentSoundFile = self.resolvedSoundFiles[self.selectionIndex]
+        print(self.currentSoundFile)
+        assert os.path.exists(self.currentSoundFile)
 
         self.loadSoundFile()
 
