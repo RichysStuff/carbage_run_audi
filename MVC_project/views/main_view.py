@@ -196,7 +196,7 @@ class MainView(QMainWindow):
             self._ui.pB_key_4_0.setStyleSheet(f"background-color: {self.activated_color if current_index == 3 else self.disactivated_color}")
             self._ui.pB_key_0_1.setStyleSheet(f"background-color: {self.disactivated_color}")
             self._ui.pB_key_1_1.setStyleSheet(f"background-color: {self.disactivated_color}")
-            self._ui.pB_key_1_1.setText(f"play/stop\n Sound {current_index}")
+            self._ui.pB_key_1_1.setText(f"play\n {self._main_controller.soundPlayer.get_file_name()}")
             self._ui.pB_key_2_1.setStyleSheet(f"background-color: {self.disactivated_color}")
             self._ui.pB_key_3_1.setStyleSheet(f"background-color: {self.activated_color if current_index == 4 else self.disactivated_color}")
             self._ui.pB_key_4_1.setStyleSheet(f"background-color: {self.activated_color if current_index == 5 else self.disactivated_color}")
@@ -246,19 +246,17 @@ class MainView(QMainWindow):
         self._ui.pB_key_4_1.setText("preset 5")
 
     def set_speaker_page(self):
-        current_index = self._main_controller.soundPlayer.get_selection_index()
-
         self._ui.pTE_console.appendPlainText("Speaker page loaded.")
         self._ui.pTE_console.ensureCursorVisible()
-        self._ui.pB_key_1_0.setText("preset 0")
-        self._ui.pB_key_2_0.setText("preset 1")
-        self._ui.pB_key_3_0.setText("preset 2")
-        self._ui.pB_key_4_0.setText("preset 3")
+        self._ui.pB_key_1_0.setText(self._main_controller.soundPlayer.get_file_name(0))
+        self._ui.pB_key_2_0.setText(self._main_controller.soundPlayer.get_file_name(1))
+        self._ui.pB_key_3_0.setText(self._main_controller.soundPlayer.get_file_name(2))
+        self._ui.pB_key_4_0.setText(self._main_controller.soundPlayer.get_file_name(3))
         self._ui.pB_key_0_1.setText("prev.\n Sound")
-        self._ui.pB_key_1_1.setText(f"play/stop\n Sound {current_index}")
+        self._ui.pB_key_1_1.setText(f"play\n {self._main_controller.soundPlayer.get_file_name()}")
         self._ui.pB_key_2_1.setText("next\n Sound")
-        self._ui.pB_key_3_1.setText("preset 4")
-        self._ui.pB_key_4_1.setText("preset 5")
+        self._ui.pB_key_3_1.setText(self._main_controller.soundPlayer.get_file_name(4))
+        self._ui.pB_key_4_1.setText(self._main_controller.soundPlayer.get_file_name(5))
          
     def set_util_page(self):
         brightness = self._main_controller.settingsManager.get_current_brightness()

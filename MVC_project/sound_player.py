@@ -1,12 +1,14 @@
 import os
 from PyQt5.QtCore import *
-import pyaudio
+import pygame
 import wave
 
 class Player(QObject):
-    base_path =  "/home/carbage/carbage_run_audi/MVC_project/sound_files"
-    soundFiles = ["sound_file_0_corrected.wav", "sound_file_1_corrected.wav", "sound_file_2_corrected.wav",
-                  "sound_file_3_corrected.wav", "sound_file_4_corrected.wav", "sound_file_5_corrected.wav"]
+    base_path =  "/home/carbage/carbage_run_audi/MVC_project/sound_files/instant_buttons"
+
+    # soundFiles = ["sound_file_0_corrected.wav", "sound_file_1_corrected.wav", "sound_file_2_corrected.wav",
+    #                "sound_file_3_corrected.wav", "sound_file_4_corrected.wav", "sound_file_5_corrected.wav"]
+    
     presetLookUpTable = [0, 1, 2, 3, 4, 5]  # index --> index resolved names
     SoundSelected = pyqtSignal(str)
     SoundStarted = pyqtSignal()
@@ -15,57 +17,45 @@ class Player(QObject):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         
-        self.stream = None
-        self.wf = None
-        self.selectionIndex = 0
-
         if os.name == 'nt':
-            self.base_path = r'C:\Users\rich_\OneDrive\raspberry_carbage\MVC_project\sound_files'
+            self.base_path = r'C:\Users\rich_\OneDrive\raspberry_carbage\MVC_project\sound_files\instant_buttons'
 
-        self.resolvedSoundFiles = [os.path.join(self.base_path, sound_file) for sound_file in self.soundFiles]
+        pygame.mixer.init()
+
+        self.selectionIndex = 0        
+        self.resolvedSoundFiles = []
+        for root, dirs, files in os.walk(self.base_path, topdown=False):
+            for name in files:
+                self.resolvedSoundFiles.append(os.path.join(root, name))
+
         self.currentSoundFile = self.resolvedSoundFiles[self.selectionIndex]
         print(self.currentSoundFile)
         assert os.path.exists(self.currentSoundFile)
 
         self.loadSoundFile()
-
-        # define callback
-    def _callback(self, in_data, frame_count, time_info, status):
-        data = self.wf.readframes(frame_count)
-        return (data, pyaudio.paContinue)
     
     def loadSoundFile(self):
-        # you audio here
+        
         self.currentSoundFile = self.resolvedSoundFiles[self.selectionIndex]
-        self.wf = wave.open(self.currentSoundFile, 'rb')
-
-        # instantiate PyAudio
-        self.p = pyaudio.PyAudio()
-
-        # open stream using callback
-        self.stream = self.p.open(format=self.p.get_format_from_width(self.wf.getsampwidth()),
-                                    channels=self.wf.getnchannels(),
-                                    rate=self.wf.getframerate(),
-                                    output=True, start=False,
-                                    frames_per_buffer=8000,
-                                    stream_callback=self._callback)
+        pygame.mixer.music.load(self.currentSoundFile)
 
     @pyqtSlot()
     def start_sound(self):
         # print(f"entry start_sound:{process.memory_info().rss}")  # in bytes
-        self.stop_sound()
+        if pygame.mixer.music.get_busy():
+            self.stop_sound()
 
         self.loadSoundFile()
         # print(f"after load :{process.memory_info().rss}")  # in bytes
-        self.stream.start_stream()
+        pygame.mixer.music.play()
         self.SoundStarted.emit()
         
     @pyqtSlot()
     def stop_sound(self):
         # print(f"entry stop_sound:{process.memory_info().rss}")  # in bytes
-        self.stream.stop_stream()
-        self.stream.close()
-        self.wf.close()
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.stop()
+ 
         self.SoundStopped.emit()
         # print(f"return stop_sound:{process.memory_info().rss}")  # in bytes
 
@@ -120,6 +110,16 @@ class Player(QObject):
 
     def get_selection_index(self):
         return self.selectionIndex
+    
+    def get_file_name(self, index=None):
+        if index is None:
+            filename = self.currentSoundFile
+        else:
+            mainIndex = self.presetLookUpTable[index]
+            filename = self.resolvedSoundFiles[mainIndex]
+        
+        return filename.replace(self.base_path, "").replace(".mp3", "").replace("/", "")[:10]
+            
 
 if __name__ == "__main__":
 
@@ -140,21 +140,21 @@ if __name__ == "__main__":
 
     widget = QWidget()
     layout = QVBoxLayout()
-    pB_0 = QPushButton("preset 0")
+    pB_0 = QPushButton(player.get_file_name(0))
     pB_0.clicked.connect(player.playPreset0)
-    pB_1 = QPushButton("preset 1")
+    pB_1 = QPushButton(player.get_file_name(1))
     pB_1.clicked.connect(player.playPreset1)
-    pB_2 = QPushButton("preset 2")
+    pB_2 = QPushButton(player.get_file_name(2))
     pB_2.clicked.connect(player.playPreset2)
-    pB_3 = QPushButton("preset 3")
+    pB_3 = QPushButton(player.get_file_name(3))
     pB_3.clicked.connect(player.playPreset3)
-    pB_4 = QPushButton("preset 4")
+    pB_4 = QPushButton(player.get_file_name(4))
     pB_4.clicked.connect(player.playPreset4)
-    pB_5 = QPushButton("preset 5")
+    pB_5 = QPushButton(player.get_file_name(5))
     pB_5.clicked.connect(player.playPreset5)
     pB_prev = QPushButton("prev")
     pB_prev.clicked.connect(player.prev_sound)
-    pB_play = QPushButton("play")
+    pB_play = QPushButton("play: " + player.get_file_name())
     pB_play.clicked.connect(player.start_sound)
     pB_next = QPushButton("next")
     pB_next.clicked.connect(player.next_sound)
