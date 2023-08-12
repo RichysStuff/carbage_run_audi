@@ -18,20 +18,12 @@ class MainView(QMainWindow):
         self._ui = Ui_MainWindow()
         self._ui.setupUi(self)
 
-        # connect ui-widget to controller
-        # if ui changes, it sends a signal to an slot on which we connect a controller class.
-        # therefore we can recive the signal in the controller
-        """ self._ui.spinBox_amount.valueChanged.connect(self._main_controller.change_amount)
-        # Lambda to execute function with value
-        self._ui.pushButton_reset.clicked.connect(lambda: self._main_controller.change_amount(0))
-
-        self._ui.pushButton_add.clicked.connect(lambda: self._main_controller.add_user(self._ui.lineEdit_name.text()))
-        self._ui.pushButton_delete.clicked.connect(lambda: self._main_controller.delete_user(self._ui.listWidget_names.currentRow())) """
         self.sCt_pB_horns_menu = QShortcut(u"0", self, self._main_controller.set_horns_mode)
         self.sCt_pB_lights_menu = QShortcut(u"1", self, self._main_controller.set_lights_mode)
         self.sCt_pB_speaker_menu = QShortcut(u"4", self, self._main_controller.set_speaker_mode)
         self.sCt_pB_settings_menu = QShortcut(u"7", self, self._main_controller.set_settings_mode)
         
+        # standalone shortcut objects (direct connection on pushbutton stop working for some reason)
         self.sCt_pB_1_0 = QShortcut(u"2", self, self._main_controller.handler_key_1_0)
         self.sCt_pB_2_0 = QShortcut(u"5", self, self._main_controller.handler_key_2_0)
         self.sCt_pB_3_0 = QShortcut(u"8", self, self._main_controller.handler_key_3_0)
@@ -46,6 +38,7 @@ class MainView(QMainWindow):
         self.sCt_pB_all_time_2 = QShortcut(u"-", self, self._main_controller.handler_all_time_2)
         self.sCt_pB_all_time_3 = QShortcut(u"Backspace", self, self._main_controller.handler_all_time_3)
 
+        #prevent command spam of doom
         self.sCt_pB_horns_menu.setAutoRepeat(False)
         self.sCt_pB_lights_menu.setAutoRepeat(False)
         self.sCt_pB_speaker_menu.setAutoRepeat(False)
@@ -81,7 +74,7 @@ class MainView(QMainWindow):
 
         self._ui.pTE_console.setCenterOnScroll(True) 
 
-                # mapping to handler functions
+        # mapping to handler functions
         self._ui.pB_key_1_0.clicked.connect(self._main_controller.handler_key_1_0)
         self._ui.pB_key_2_0.clicked.connect(self._main_controller.handler_key_2_0)
         self._ui.pB_key_3_0.clicked.connect(self._main_controller.handler_key_3_0)
@@ -96,39 +89,36 @@ class MainView(QMainWindow):
         self._ui.pB_all_time_2.clicked.connect(self._main_controller.handler_all_time_2)
         self._ui.pB_all_time_3.clicked.connect(self._main_controller.handler_all_time_3)
 
+        self._ui.pB_all_time_0.released.connect(self._main_controller.handler_all_time_0)
+        self._ui.pB_all_time_1.released.connect(self._main_controller.handler_all_time_1)
+        self._ui.pB_all_time_2.released.connect(self._main_controller.handler_all_time_2)
+        self._ui.pB_all_time_3.released.connect(self._main_controller.handler_all_time_3)
+
         self._ui.pB_all_time_0.setText("THW Horn")
         self._ui.pB_all_time_1.setText("Train Horn")
         self._ui.pB_all_time_2.setText("Preset 6\n Horn Sound")
         self._ui.pB_all_time_3.setText("All Horns")
-
+        
+        # visualize model data on Gui.
         self._model.lights_changed.connect(self.update_button_visualisation_lights)
         self._model.horns_changed.connect(self.update_button_visualisation_horns)
         self._model.horns_changed.connect(self.update_button_visualisation_allTimeAccess)
         self._main_controller.soundPlayer.SoundSelected.connect(self.update_button_visualisation_speaker)
         self._main_controller.settingsManager.NewSettings.connect(self.update_button_visualisation_settings)
 
-        """ self._ui.pB_horns.pressed.connect(self._main_controller.set_horns_mode)
-        self._ui.pB_lights.pressed.connect(self._main_controller.set_lights_mode)
-        self._ui.pB_speaker.pressed.connect(self._main_controller.set_speaker_mode)
-        self._ui.pB_settings.pressed.connect(self._main_controller.set_settings_mode)
- """
-        # listen for model event signals
-        # connect the method to update the ui to the slots of the model
-        # if model sends/emits a signal the ui gets notified
-        """ self._model.amount_changed.connect(self.on_amount_changed)
-        self._model.even_odd_changed.connect(self.on_even_odd_changed)
-        self._model.enable_reset_changed.connect(self.on_enable_reset_changed)
-
-        self._model.users_changed.connect(self.on_list_changed)
-        
-        # set a default value
-        self._main_controller.change_amount(42) """
+        # Print stuff to Gui console
         self._model.gui_mode_changed.connect(self.set_gui_mode)
+        self._model.horns_changed.connect(self.show_current_selections)
+        self._model.lights_changed.connect(self.show_current_selections)
         self._main_controller.soundPlayer.SoundSelected.connect(self.appendToConsole)
 
     @pyqtSlot()
-    def test_shortcut(self):
-        print("shortcut triggered")
+    def test_shortcut_clicked(self):
+        print("shortcut clicked")
+
+    @pyqtSlot()
+    def test_shortcut_released(self):
+        print("shortcut released")
 
     @pyqtSlot(int)
     def set_gui_mode(self, mode: int):
@@ -169,7 +159,8 @@ class MainView(QMainWindow):
             self._ui.pB_key_0_1.setStyleSheet(f"background-color: {self.activated_color if config['activate_lightbar_back'] else self.disactivated_color}")
             self._ui.pB_key_1_1.setStyleSheet(f"background-color: {self.activated_color if config['activate_mode_lightbar_back'] else self.disactivated_color}")
             self._ui.pB_key_2_1.setStyleSheet(f"background-color: {self.activated_color if config['activate_flasher_roof'] else self.disactivated_color}")
-            self._ui.pB_key_3_1.setStyleSheet(f"background-color: {self.activated_color if config['selection_flash_pattern_roof'] else self.disactivated_color}")
+            self._ui.pB_key_3_1.setStyleSheet(f"background-color: {self.activated_color if config['activate_flasher_roof'] else self.disactivated_color}")
+            self._ui.pB_key_3_1.setText(f"FL Dach\n Modus {config['selection_flash_pattern_roof']}")
             self._ui.pB_key_4_1.setStyleSheet(f"background-color: {self.activated_color if config['activate_worklight_roof'] else self.disactivated_color}")
 
     @pyqtSlot()
@@ -300,16 +291,10 @@ class MainView(QMainWindow):
     def appendToConsole(self, str_val):
         self._ui.pTE_console.appendPlainText(str_val)
 
-    
-"""     @pyqtSlot(str)
-    def on_even_odd_changed(self, value):
-        self._ui.label_even_odd.setText(value)
+    @pyqtSlot()
+    def show_current_selections(self):
+        lights_config = self._model.get_lights_config()
+        horns_config = self._model.get_horns_config()
 
-    @pyqtSlot(bool)
-    def on_enable_reset_changed(self, value):
-        self._ui.pushButton_reset.setEnabled(value)
-
-    @pyqtSlot(list)
-    def on_list_changed(self, value):
-        self._ui.listWidget_names.clear()
-        self._ui.listWidget_names.addItems(value) """
+        self._ui.pTE_console.appendPlainText(f'selection_flash_pattern_roof: {lights_config["selection_flash_pattern_roof"]}')
+        self._ui.pTE_console.appendPlainText(f'selection_horn_sound: {horns_config["selection_horn_sound"]}')

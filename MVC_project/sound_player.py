@@ -19,6 +19,9 @@ class Player(QObject):
         self.wf = None
         self.selectionIndex = 0
 
+        if os.name == 'nt':
+            self.base_path = r'C:\Users\rich_\OneDrive\raspberry_carbage\MVC_project\sound_files'
+
         self.resolvedSoundFiles = [os.path.join(self.base_path, sound_file) for sound_file in self.soundFiles]
         self.currentSoundFile = self.resolvedSoundFiles[self.selectionIndex]
         print(self.currentSoundFile)

@@ -6,7 +6,7 @@ class Manager(QObject):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.brightness = 100
-        self.minBrightness = 40
+        self.minBrightness = 10
         self.maxBrightness = 254
     
     @pyqtSlot()

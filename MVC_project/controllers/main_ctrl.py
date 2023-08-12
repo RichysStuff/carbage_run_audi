@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject, pyqtSlot
+from PyQt5.QtCore import QObject, pyqtSlot, QTimer
 from sound_player import Player as Player_Sound
 from settings_manager import Manager as Manager_Settings
 from MQTT_handler import MqttHandler as Handler_MQTT
@@ -17,6 +17,13 @@ class MainController(QObject):
         self.mqttHandler.connectedSignal.connect(self._model.start_timer)
         self.mqttHandler.disconnectedSignal.connect(self._model.stop_timer)
         self.mqttHandler.connect_to_broker()
+
+        self._timer = QTimer(parent=self)
+        self._timer.setInterval(2000)
+        self._timer.timeout.connect(self.update_remote_light_config)
+        self._timer.timeout.connect(self.update_remote_horn_config)
+        self.mqttHandler.connectedSignal.connect(self._timer.start)
+        self.mqttHandler.disconnectedSignal.connect(self._timer.stop)
 
     @pyqtSlot()
     def set_horns_mode(self):
