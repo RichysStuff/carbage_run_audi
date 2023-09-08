@@ -24,7 +24,15 @@ class MainController(QObject):
         self._timer.timeout.connect(self.update_remote_horn_config)
         self.mqttHandler.connectedSignal.connect(self._timer.start)
         self.mqttHandler.disconnectedSignal.connect(self._timer.stop)
-
+        
+        self.horn_sound_preset_0 = model.horn_sounds.A_Team.value
+        self.horn_sound_preset_1 = model.horn_sounds.Around_The_World_1.value
+        self.horn_sound_preset_2 = model.horn_sounds.He_Is_A_Pirate.value
+        self.horn_sound_preset_3 = model.horn_sounds.Hotel_Room_Service.value
+        self.horn_sound_preset_4 = model.horn_sounds.Nirvana_2.value
+        self.horn_sound_preset_5 = model.horn_sounds.Smash_Mouth.value
+        self.horn_sound_alltime_access = model.horn_sounds.THW_Alternating.value
+    
     @pyqtSlot()
     def set_horns_mode(self):
         self._model.set_gui_mode(self._model.HORNS_MODE)
@@ -52,7 +60,7 @@ class MainController(QObject):
     @pyqtSlot()
     def handler_key_1_0(self):
         if self._model._gui_mode == self._model.HORNS_MODE:
-            self.toggle_horns_config_param("selection_horn_sound", 0)
+            self.toggle_horns_config_param("selection_horn_sound", self.horn_sound_preset_0)
         elif self._model._gui_mode == self._model.SPEAKER_MODE:
             self.soundPlayer.playPreset0()
         elif self._model._gui_mode == self._model.LIGHTS_MODE:
@@ -63,7 +71,7 @@ class MainController(QObject):
     @pyqtSlot()
     def handler_key_2_0(self):
         if self._model._gui_mode == self._model.HORNS_MODE:
-            self.toggle_horns_config_param("selection_horn_sound", 1)
+            self.toggle_horns_config_param("selection_horn_sound", self.horn_sound_preset_1)
         elif self._model._gui_mode == self._model.SPEAKER_MODE:
             self.soundPlayer.playPreset1()
         elif self._model._gui_mode == self._model.LIGHTS_MODE:
@@ -74,7 +82,7 @@ class MainController(QObject):
     @pyqtSlot()
     def handler_key_3_0(self):
         if self._model._gui_mode == self._model.HORNS_MODE:
-            self.toggle_horns_config_param("selection_horn_sound", 2)
+            self.toggle_horns_config_param("selection_horn_sound", self.horn_sound_preset_2)
         elif self._model._gui_mode == self._model.SPEAKER_MODE:
             self.soundPlayer.playPreset2()
         elif self._model._gui_mode == self._model.LIGHTS_MODE:
@@ -85,7 +93,7 @@ class MainController(QObject):
     @pyqtSlot()
     def handler_key_4_0(self):
         if self._model._gui_mode == self._model.HORNS_MODE:
-            self.toggle_horns_config_param("selection_horn_sound", 3)
+            self.toggle_horns_config_param("selection_horn_sound", self.horn_sound_preset_3)
         elif self._model._gui_mode == self._model.SPEAKER_MODE:
             self.soundPlayer.playPreset3()
         elif self._model._gui_mode == self._model.LIGHTS_MODE:
@@ -129,7 +137,7 @@ class MainController(QObject):
     @pyqtSlot()
     def handler_key_3_1(self):
         if self._model._gui_mode == self._model.HORNS_MODE:
-            self.toggle_horns_config_param("selection_horn_sound", 4)
+            self.toggle_horns_config_param("selection_horn_sound", self.horn_sound_preset_4)
         elif self._model._gui_mode == self._model.SPEAKER_MODE:
             self.soundPlayer.playPreset4()
         elif self._model._gui_mode == self._model.LIGHTS_MODE:
@@ -140,7 +148,7 @@ class MainController(QObject):
     @pyqtSlot()
     def handler_key_4_1(self):
         if self._model._gui_mode == self._model.HORNS_MODE:
-            self.toggle_horns_config_param("selection_horn_sound", 5)
+            self.toggle_horns_config_param("selection_horn_sound", self.horn_sound_preset_5)
         elif self._model._gui_mode == self._model.SPEAKER_MODE:
             self.soundPlayer.playPreset5()
         elif self._model._gui_mode == self._model.LIGHTS_MODE:
@@ -163,7 +171,7 @@ class MainController(QObject):
     @pyqtSlot()
     def handler_all_time_2(self):
         print("handler all time 2")
-        self.toggle_horns_config_param("selection_horn_sound", 6) 
+        self.toggle_horns_config_param("selection_horn_sound", self.horn_sound_alltime_access) 
 
     @pyqtSlot()
     def handler_all_time_3(self):

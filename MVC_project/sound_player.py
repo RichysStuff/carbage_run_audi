@@ -9,7 +9,7 @@ class Player(QObject):
     # soundFiles = ["sound_file_0_corrected.wav", "sound_file_1_corrected.wav", "sound_file_2_corrected.wav",
     #                "sound_file_3_corrected.wav", "sound_file_4_corrected.wav", "sound_file_5_corrected.wav"]
     
-    presetLookUpTable = [0, 1, 2, 3, 4, 5]  # index --> index resolved names
+    presetLookUpTable = [0, 1, 2, 3, 4, 5]  # TODO unused removes
     SoundSelected = pyqtSignal(str)
     SoundStarted = pyqtSignal()
     SoundStopped = pyqtSignal()
@@ -24,9 +24,24 @@ class Player(QObject):
 
         self.selectionIndex = 0        
         self.resolvedSoundFiles = []
+
+        preset_selection = ["siren.mp3", "siren-brr-brr", "wail", "yelp", "106-miles", "musica-elevador-short"]
+
+        # 'search for the preset files'
+        for preset_file_name in preset_selection:
+            found = False
+            for root, dirs, files in os.walk(self.base_path, topdown=False):
+                for name in files:
+                    if preset_file_name in name:
+                        self.resolvedSoundFiles.append(os.path.join(root, name))
+                        found = True
+            assert found
+
+        # append the reset
         for root, dirs, files in os.walk(self.base_path, topdown=False):
             for name in files:
-                self.resolvedSoundFiles.append(os.path.join(root, name))
+                if not (os.path.join(root, name) in self.resolvedSoundFiles):
+                    self.resolvedSoundFiles.append(os.path.join(root, name))
 
         self.currentSoundFile = self.resolvedSoundFiles[self.selectionIndex]
         print(self.currentSoundFile)

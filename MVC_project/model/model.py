@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QObject, pyqtSignal, QTimer
 from PyQt5.QtCore import pyqtSlot
+from enum import Enum
 
 class Model(QObject):
     HORNS_MODE = 0
@@ -12,7 +13,7 @@ class Model(QObject):
     brightness_changed = pyqtSignal()
     gui_mode_changed = pyqtSignal(int)  
 
-    nHornsSounds = 10
+    nHornsSounds = 12
     nFlashPatternsRoof = 3
 
     """
@@ -25,7 +26,21 @@ class Model(QObject):
     5               TBD
     6               alternating THW horn
     """
-
+    
+    class horn_sounds(Enum):
+        A_Team = 0
+        Smash_Mouth = 1
+        THW_Alternating = 2
+        Peter_Gun = 3
+        Nirvana_1 = 4
+        Nirvana_2 = 5
+        Hotel_Room_Service = 6
+        Snoop_Doog = 7
+        He_Is_A_Pirate = 8
+        Under_The_Sea = 9
+        Around_The_World_2 = 10
+        Around_The_World_1 = 11
+        
     def set_lights_config(self, config: dict):
         self.lights_config = config
         self.lights_changed.emit()
