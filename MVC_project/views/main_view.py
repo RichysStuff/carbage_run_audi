@@ -96,7 +96,7 @@ class MainView(QMainWindow):
 
         self._ui.pB_all_time_0.setText("THW Horn")
         self._ui.pB_all_time_1.setText("Train Horn")
-        self._ui.pB_all_time_2.setText("Preset 6\n Horn Sound")
+        self._ui.pB_all_time_2.setText(self._model.horn_sounds(self._main_controller.horn_sound_alltime_access).name)
         self._ui.pB_all_time_3.setText("All Horns")
         
         # visualize model data on Gui.
@@ -119,7 +119,7 @@ class MainView(QMainWindow):
     @pyqtSlot()
     def test_shortcut_released(self):
         print("shortcut released")
-
+    
     @pyqtSlot(int)
     def set_gui_mode(self, mode: int):
         if mode == self._model.HORNS_MODE:
@@ -175,16 +175,16 @@ class MainView(QMainWindow):
         if self._model.get_gui_mode() == self._model.HORNS_MODE:
             config = self._model.get_horns_config()
             
-            self._ui.pB_key_1_0.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == 0 else self.disactivated_color}")
-            self._ui.pB_key_2_0.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == 1 else self.disactivated_color}")
-            self._ui.pB_key_3_0.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == 2 else self.disactivated_color}")
-            self._ui.pB_key_4_0.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == 3 else self.disactivated_color}")
+            self._ui.pB_key_1_0.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == self._main_controller.horn_sound_preset_0 else self.disactivated_color}")
+            self._ui.pB_key_2_0.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == self._main_controller.horn_sound_preset_1 else self.disactivated_color}")
+            self._ui.pB_key_3_0.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == self._main_controller.horn_sound_preset_2 else self.disactivated_color}")
+            self._ui.pB_key_4_0.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == self._main_controller.horn_sound_preset_3 else self.disactivated_color}")
             self._ui.pB_key_0_1.setStyleSheet(f"background-color: {self.disactivated_color}")
             self._ui.pB_key_1_1.setStyleSheet(f"background-color: {self.activated_color if config['activate_horn_sound'] else self.disactivated_color}")
-            self._ui.pB_key_1_1.setText(f"play/stop\n Midi {config['selection_horn_sound']}")
+            self._ui.pB_key_1_1.setText(f"play/stop\n {self._model.horn_sounds(config['selection_horn_sound']).name[:10]}")
             self._ui.pB_key_2_1.setStyleSheet(f"background-color: {self.disactivated_color}")
-            self._ui.pB_key_3_1.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == 4 else self.disactivated_color}")
-            self._ui.pB_key_4_1.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == 5 else self.disactivated_color}")
+            self._ui.pB_key_3_1.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == self._main_controller.horn_sound_preset_4 else self.disactivated_color}")
+            self._ui.pB_key_4_1.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == self._main_controller.horn_sound_preset_5 else self.disactivated_color}")
 
     @pyqtSlot()
     def update_button_visualisation_speaker(self):
@@ -228,22 +228,22 @@ class MainView(QMainWindow):
         config = self._model.get_horns_config()
         self._ui.pB_all_time_0.setStyleSheet(f"background-color: {self.activated_color if config['activate_thw_horn'] else self.disactivated_color}")
         self._ui.pB_all_time_1.setStyleSheet(f"background-color: {self.activated_color if config['activate_train_horn'] else self.disactivated_color}")
-        self._ui.pB_all_time_2.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == 6 else self.disactivated_color}")
+        self._ui.pB_all_time_2.setStyleSheet(f"background-color: {self.activated_color if config['selection_horn_sound'] == self._main_controller.horn_sound_alltime_access else self.disactivated_color}")
         self._ui.pB_all_time_3.setStyleSheet(f"background-color: {self.activated_color if config['activate_all_horns'] else self.disactivated_color}")
 
     def set_horn_page(self):
         config = self._model.get_horns_config()
         self._ui.pTE_console.appendPlainText("Horn page loaded.")
         self._ui.pTE_console.ensureCursorVisible()
-        self._ui.pB_key_1_0.setText("preset 0")
-        self._ui.pB_key_2_0.setText("preset 1")
-        self._ui.pB_key_3_0.setText("preset 2")
-        self._ui.pB_key_4_0.setText("preset 3")
+        self._ui.pB_key_1_0.setText(self._model.horn_sounds(self._main_controller.horn_sound_preset_0).name[:10]) 
+        self._ui.pB_key_2_0.setText(self._model.horn_sounds(self._main_controller.horn_sound_preset_1).name[:10])
+        self._ui.pB_key_3_0.setText(self._model.horn_sounds(self._main_controller.horn_sound_preset_2).name[:10])
+        self._ui.pB_key_4_0.setText(self._model.horn_sounds(self._main_controller.horn_sound_preset_3).name[:10])
         self._ui.pB_key_0_1.setText("prev.\n Midi")
-        self._ui.pB_key_1_1.setText(f"play/stop\n Midi {config['selection_horn_sound']}")
+        self._ui.pB_key_1_1.setText(f"play/stop\n Midi {self._model.horn_sounds(config['selection_horn_sound']).name[:10]}")
         self._ui.pB_key_2_1.setText("next\n Midi")
-        self._ui.pB_key_3_1.setText("preset 4")
-        self._ui.pB_key_4_1.setText("preset 5")
+        self._ui.pB_key_3_1.setText(self._model.horn_sounds(self._main_controller.horn_sound_preset_4).name[:10])
+        self._ui.pB_key_4_1.setText(self._model.horn_sounds(self._main_controller.horn_sound_preset_5).name[:10])
 
     def set_speaker_page(self):
         self._ui.pTE_console.appendPlainText("Speaker page loaded.")
@@ -295,4 +295,4 @@ class MainView(QMainWindow):
         horns_config = self._model.get_horns_config()
 
         self._ui.pTE_console.appendPlainText(f'selection_flash_pattern_roof: {lights_config["selection_flash_pattern_roof"]}')
-        self._ui.pTE_console.appendPlainText(f'selection_horn_sound: {horns_config["selection_horn_sound"]}')
+        self._ui.pTE_console.appendPlainText(f'selection_horn_sound: {horns_config["selection_horn_sound"]} --> {self._model.horn_sounds(horns_config["selection_horn_sound"]).name}')
